@@ -15,39 +15,19 @@ jobs:
             - engaged-jars-
 
       - run:
-          name: Install awscli
-          command: |
-            if [ ! -f /usr/local/bin/aws ]; then
-              curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip" &&
-              unzip awscli-bundle.zip &&
-              ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-            else
-              echo Already installed
-            fi
-
-      - run:
-          name: Compile
+          name: Build/deploy
           environment:
             BOOT_AS_ROOT: "yes"
-          command: boot production build target
+            BOOT_JVM_OPTIONS: "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2g -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -Xverify:none"
+          command: |
+            if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+              boot production build deploy
+            else
+              boot production build target
+            fi
 
       - save_cache:
           key: engaged-jars-{{ checksum "build.boot" }}
           paths:
             - /root/.m2
             - /root/bin
-
-      - run:
-          name: maybe deploy
-          command: |
-            if [[ "${CIRCLE_BRANCH}" == "master" ]]
-            then
-              aws s3 sync ./target s3://engaged.rip --delete --exclude 'js/app.out/*'
-              curl -X DELETE "https://api.cloudflare.com/client/v4/zones/${CF_ZONE}/purge_cache" \
-                   -H "X-Auth-Email: cloudflare@waygate.org" \
-                   -H "X-Auth-Key: ${CF_API_KEY}" \
-                   -H "Content-Type: application/json" \
-                   --data '{"purge_everything": true}'
-            else
-              echo Not deploying
-            fi

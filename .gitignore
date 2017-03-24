@@ -1,5 +1,5 @@
 /target
-/.nrepl-port
 /out
 .DS_Store
+/.nrepl-*
 
