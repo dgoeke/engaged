@@ -1,21 +1,33 @@
 (ns engaged.app
-  (:require [reagent.core :as reagent :refer [atom]]
-            [devtools.core :as devtools]))
+  (:require [cljsjs.bootstrap]
+            [cljsjs.jquery]
+            [devtools.core :as devtools]
+            [engaged.config :refer [config]]
+            [engaged.events]
+            [engaged.routes]
+            [engaged.subs]
+            [engaged.views :as views]
+            [mount.core :as mount :refer [defstate]]
+            [re-frame.core :as re-frame]
+            [re-frisk.core :refer [enable-re-frisk!]]
+            [reagent.core :as reagent :refer [atom]]))
 
-(devtools/set-pref! :dont-detect-custom-formatters true)
+(defn dev-setup []
+  (when (:debug? config)
+    (enable-console-print!)
+    (enable-re-frisk!)
+    (println "dev mode")))
 
-(defn some-component []
-  [:div
-   [:h3 "I am a thing!"]
-   [:p.someclass
-    "I have " [:strong "bold"]
-    [:span {:style {:color "red"}} " and red"]
-    " text."]])
+(defn mount-root-element []
+  (re-frame/clear-subscription-cache!)
+  (reagent/render [views/main-app-window]
+                  (.getElementById js/document "container")))
 
-(defn calling-component []
-  [:div "Parent component"
-   [some-component]])
+(defstate root-element
+  :start (mount-root-element))
 
-(defn init []
-  (reagent/render-component [calling-component]
-                            (.getElementById js/document "container")))
+(defn ^:export init []
+  (dev-setup)
+  (re-frame/dispatch-sync [:initialize-db])
+  (mount/start)
+  (re-frame/dispatch-sync [:loading-complete]))
