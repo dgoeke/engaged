@@ -1,5 +1,6 @@
 (ns engaged.events
-  (:require [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx]]
+  (:require [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx reg-fx]]
+            [accountant.core :as accountant]
             [engaged.auth :as auth]
             [engaged.db :as db]
             [reagent.core :as r]))
@@ -11,11 +12,10 @@
               (fn [db [_ route]]
                 (assoc db :route route)))
 
-(reg-event-db :loading-complete
-              (fn [db _]
+(reg-event-fx :loading-complete
+              (fn [{:keys [db]} _]
                 (when-not (= (:app-state db) :resuming)
-                  (auth/maybe-show-login))
-                db))
+                  {:auth :maybe-show-login})))
 
 (reg-event-db :login-resuming
               (fn [db _]
@@ -26,3 +26,16 @@
                 (-> db
                     (assoc :auth auth)
                     (assoc :app-state :running))))
+
+(reg-event-fx :logout
+              (constantly {:auth :logout}))
+
+(reg-fx :auth
+        (fn [val]
+          (case val
+            :maybe-show-login (auth/maybe-show-login!)
+            :logout           (do (auth/logout!)
+                                  (accountant/navigate! "/")
+                                  (.reload js/location))
+
+            (println "Error: unknown auth command:" val))))

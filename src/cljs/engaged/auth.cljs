@@ -1,5 +1,5 @@
 (ns engaged.auth
-  (:require [alandipert.storage-atom :refer [local-storage]]
+  (:require [alandipert.storage-atom :refer [local-storage clear-local-storage!]]
             [cljsjs.auth0-lock]
             [engaged.config :refer [config]]
             [mount.core :refer [defstate]]
@@ -40,8 +40,11 @@
 (defstate ^{:on-reload :noop} lock-on-auth
   :start (.on @lock "authenticated" on-auth-result))
 
-(defn maybe-show-login []
+(defn maybe-show-login! []
   (let [{:keys [auth profile]} @@stored-auth]
     (if (and auth profile)
       (on-logged-in auth profile)
       (.show @lock (clj->js auth0-params)))))
+
+(defn logout! []
+  (clear-local-storage!))
