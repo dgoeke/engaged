@@ -14,18 +14,14 @@
     (secretary/dispatch! path)
     (re-frame/dispatch-sync [:login-resuming])))
 
-(defn routes []
-  (defroute "/" []
-    (re-frame/dispatch [:set-route :lobby]))
+(defroute lobby-route "/" []
+  (re-frame/dispatch [:set-route :lobby]))
 
-  (defroute "/about" []
-    (re-frame/dispatch [:set-route :about])))
+(defroute about-route "/about" []
+  (re-frame/dispatch [:set-route :about]))
 
-(defn setup-navigation []
-  (accountant/configure-navigation! {:nav-handler  dispatch!
-                                     :path-exists? secretary/locate-route})
-  (routes)
-  (accountant/dispatch-current!))
+(accountant/configure-navigation! {:nav-handler  dispatch!
+                                   :path-exists? secretary/locate-route})
 
-(defstate navigation
-  :start (setup-navigation))
+(defstate initial-dispatch
+  :start (accountant/dispatch-current!))
