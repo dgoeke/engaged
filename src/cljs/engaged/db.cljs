@@ -1,4 +1,5 @@
-(ns engaged.db)
+(ns engaged.db
+  (:require [cljsjs.pouchdb]))
 
 (def default-db
   {:route     :lobby

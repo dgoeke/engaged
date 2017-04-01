@@ -1,6 +1,6 @@
 (ns engaged.app
-  (:require [cljsjs.bootstrap]
-            [cljsjs.jquery]
+  (:require [cljsjs.jquery]
+            [cljsjs.tether]
             [devtools.core :as devtools]
             [engaged.config :refer [config]]
             [engaged.events]

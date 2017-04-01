@@ -3,8 +3,13 @@
             [garden.stylesheet :refer [rule]]))
 
 (defstyles screen
-  (let [body (rule :body)]
-    (body
-     {:font-family "Helvetica Neue"
-      :font-size   "16px"
-      :line-height 1.5})))
+  [:body {:padding-top "4rem"}]
+
+  [:img.profile-image {:position      "relative"
+                       :top           "-5px"
+                       :float         "left"
+                       :left          "-5px"
+                       :height        "32px"
+                       :padding-right "10px"}]
+
+  [:a.dropdown-item {:cursor "pointer"}])

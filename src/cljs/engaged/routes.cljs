@@ -14,10 +14,10 @@
     (secretary/dispatch! path)
     (re-frame/dispatch-sync [:login-resuming])))
 
-(defroute lobby-route "/" []
+(defroute lobby "/" []
   (re-frame/dispatch [:set-route :lobby]))
 
-(defroute about-route "/about" []
+(defroute about "/about" []
   (re-frame/dispatch [:set-route :about]))
 
 (accountant/configure-navigation! {:nav-handler  dispatch!
