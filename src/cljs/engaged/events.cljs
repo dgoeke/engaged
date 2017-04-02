@@ -12,12 +12,10 @@
 
 (reg-event-db :db-changed
               (fn [db [changes]]
-                (println "changes:" changes)
                 db))
 
 (reg-event-db :game-list
               (fn [db [games]]
-                (println "game list" games)
                 (assoc db :games (->> (:rows games)
                                       (map :doc)))))
 

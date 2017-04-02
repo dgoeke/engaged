@@ -1,16 +1,16 @@
 (ns engaged.views
   (:require [re-frame.core :as re-frame]
             [engaged.routes :as routes]
-            [engaged.views.navbar :as navbar]))
+            [engaged.views.navbar :as navbar]
+            [engaged.views.lobby :as lobby]
+            [engaged.views.about :as about]))
 
 (defn route->view [route]
   (case route
-    :lobby [:div
-            [:div "here's the lobby"]
-            [:a {:href (routes/about)} "go to about"]]
-    :about [:div
-            [:div "about stuff..."]
-            [:a {:href (routes/lobby)} "go home"]]))
+    :lobby [lobby/view]
+    :about [about/view]
+
+    (throw (ex-info "Unknown view requested" {:route route}))))
 
 (defn current-route-view []
   (let [route (re-frame/subscribe [:route])]
