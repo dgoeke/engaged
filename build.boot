@@ -21,6 +21,7 @@
    [cljsjs/pouchdb                "6.0.4-0"]
    [cljsjs/tether                 "1.4.0-0"]
    [org.clojure/clojurescript     "1.9.293"]
+   [com.andrewmcveigh/cljs-time   "0.4.0"]
    [mount                         "0.1.11"]
    [re-frame                      "0.9.2"]
    [re-frisk                      "0.3.2"]

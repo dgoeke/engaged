@@ -17,3 +17,7 @@
 (reg-sub :app-state
          (fn [db _]
            (:app-state db)))
+
+(reg-sub :game-list
+         (fn [db _]
+           (:games db)))

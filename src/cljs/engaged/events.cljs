@@ -5,8 +5,21 @@
             [engaged.db :as db]
             [engaged.interceptors :refer [standard-interceptors reg-event-db]]))
 
-(reg-event-db :initialize-db
-              (constantly db/default-db))
+(reg-event-fx :initialize-db
+              [re-frame/debug]
+              (constantly {:db      db/default-db
+                           :pouchdb :all-games}))
+
+(reg-event-db :db-changed
+              (fn [db [changes]]
+                (println "changes:" changes)
+                db))
+
+(reg-event-db :game-list
+              (fn [db [games]]
+                (println "game list" games)
+                (assoc db :games (->> (:rows games)
+                                      (map :doc)))))
 
 (reg-event-db :set-route
               (fn [db [route]]
@@ -43,3 +56,10 @@
             :check-creds (auth/check-stored-credentials!)
 
             (throw (ex-info "Unknown auth command" {:command val})))))
+
+(reg-fx :pouchdb
+        (fn [val]
+          (case val
+            :all-games (db/all-games!)
+
+            (throw (ex-info "Unknown pouchdb command" {:command val})))))
