@@ -1,0 +1,10 @@
+CACHE MANIFEST
+
+CACHE:
+https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css
+https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js
+css/garden.css
+js/app.js
+
+NETWORK:
+*
