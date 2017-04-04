@@ -56,6 +56,7 @@
      (build)))
 
 (deftask production []
+  (info "Production mode: advanced compilation.\n")
   (task-options! cljs {:optimizations   :advanced
                        :compiler-options {:closure-defines {'goog.DEBUG false}}}
                  garden {:pretty-print false})
