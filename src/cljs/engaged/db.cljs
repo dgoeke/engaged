@@ -34,10 +34,16 @@
   (let [new-item (if (:_id item)
                    item
                    (assoc item :_id (-> (t/now) coerce/to-long str)))]
-    (.log js/console "new-item" (clj->js new-item))
     (.put @db (clj->js new-item))))
 
 (defn all-games! []
   (-> @db
       (.query "games-index" (clj->js {:include_docs true}))
       (.then #(dispatch [:game-list (->clj %)]))))
+
+(defn create-game!
+  [{:as info :keys [name type]}]
+  (-> (insert! {:game-name name :game-type type})
+      (.then (fn [result-js]
+               (let [result (->clj result-js)]
+                 (dispatch [:game-created (:id result)]))))))

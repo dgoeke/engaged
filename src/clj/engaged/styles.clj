@@ -3,7 +3,7 @@
             [garden.stylesheet :refer [rule]]))
 
 (defstyles screen
-  [:body {:padding-top "4rem"}]
+  [:.main-container {:padding-top "5rem"}]
 
   [:img.profile-image {:position      "relative"
                        :top           "-5px"

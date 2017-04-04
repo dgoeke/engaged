@@ -15,6 +15,7 @@
    [com.amazonaws/aws-java-sdk    "1.11.98"        :scope "test" :exclusions [joda-time]]
    [clj-http                      "2.3.0"          :scope "test"]
    [tailrecursion/boot-bucket     "0.2.1-SNAPSHOT" :scope "test" :exclusions [com.amazonaws/aws-java-sdk-s3]]
+   [org.clojure/core.match        "0.3.0-alpha4"]
    [alandipert/storage-atom       "2.0.1"]
    [cljsjs/auth0-lock             "10.13.0-0"]
    [cljsjs/jquery                 "2.2.4-0"]

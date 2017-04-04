@@ -1,22 +1,25 @@
 (ns engaged.views
-  (:require [re-frame.core :as re-frame]
+  (:require [cljs.core.match :refer-macros [match]]
+            [re-frame.core :as re-frame]
             [engaged.routes :as routes]
             [engaged.views.navbar :as navbar]
             [engaged.views.lobby :as lobby]
-            [engaged.views.about :as about]))
+            [engaged.views.about :as about]
+            [engaged.views.game :as game]))
 
 (defn route->view [route]
-  (case route
-    :lobby [lobby/view]
-    :about [about/view]
+  (match route
+         :lobby     [lobby/view]
+         :about     [about/view]
+         [:game id] [game/view id]
 
-    (throw (ex-info "Unknown view requested" {:route route}))))
+         :else (throw (ex-info "Unknown view requested" {:route route}))))
 
 (defn current-route-view []
   (let [route (re-frame/subscribe [:route])]
     [:div
      [navbar/view]
-     [:div.container-fluid
+     [:div.container-fluid.main-container
       (route->view @route)]]))
 
 (defn loading-view []

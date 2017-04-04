@@ -3,16 +3,17 @@
             [accountant.core :as accountant]
             [engaged.auth :as auth]
             [engaged.db :as db]
-            [engaged.interceptors :refer [standard-interceptors reg-event-db]]))
+            [engaged.interceptors :refer [standard-interceptors reg-event-db]]
+            [engaged.routes :as routes]))
 
 (reg-event-fx :initialize-db
               [re-frame/debug]
               (constantly {:db      db/default-db
-                           :pouchdb :all-games}))
+                           :pouchdb [:all-games]}))
 
-(reg-event-db :db-changed
+(reg-event-fx :db-changed
               (fn [db [changes]]
-                db))
+                {:pouchdb [:all-games]}))
 
 (reg-event-db :game-list
               (fn [db [games]]
@@ -31,6 +32,15 @@
                        (when-not (= (:app-state db) :resuming)
                          {:auth :check-creds}))))
 
+(reg-event-fx :create-game
+              (fn [_ [_ args]]
+                {:pouchdb [:create-game args]}))
+
+(reg-event-fx :game-created
+              (fn [_ [_ id]]
+                {:navigate (routes/game {:id id})
+                 :pouchdb  [:all-games]}))
+
 (reg-event-db :login-resuming
               (fn [db _]
                 (assoc db :app-state :resuming)))
@@ -46,6 +56,10 @@
 (reg-event-fx :login
               (constantly {:auth :login}))
 
+(reg-fx :navigate
+        (fn [val]
+          (accountant/navigate! val)))
+
 (reg-fx :auth
         (fn [val]
           (case val
@@ -56,8 +70,9 @@
             (throw (ex-info "Unknown auth command" {:command val})))))
 
 (reg-fx :pouchdb
-        (fn [val]
-          (case val
-            :all-games (db/all-games!)
+        (fn [[cmd args]]
+          (case cmd
+            :all-games   (db/all-games!)
+            :create-game (db/create-game! args)
 
             (throw (ex-info "Unknown pouchdb command" {:command val})))))
